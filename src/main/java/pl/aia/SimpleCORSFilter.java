@@ -1,4 +1,4 @@
-package pl.aia.wallet;
+package pl.aia;
 
 import java.io.IOException;
 import javax.servlet.Filter;
