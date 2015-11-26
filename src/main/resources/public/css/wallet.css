@@ -1,0 +1,20 @@
+body {
+	padding: 25px;
+	padding-top: 0px;
+}
+
+hr {
+	color: #DDD;
+}
+
+form {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+.walletNav {
+	margin-bottom: 10px;
+}
+
+.restApiHostSpan {
+	font-size: 8pt;
+}
