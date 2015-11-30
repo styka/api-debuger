@@ -5,13 +5,13 @@ public class ApiRequestMapping {
 	private Long id;
 	private String value;
 	private String method;
-	private Long apiControllerId;
+	private String source;
 
 	public String getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.value = value;
 	}
 
@@ -19,7 +19,7 @@ public class ApiRequestMapping {
 		return method;
 	}
 
-	public void setMethod(String method) {
+	public void setMethod(final String method) {
 		this.method = method;
 	}
 
@@ -27,16 +27,16 @@ public class ApiRequestMapping {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	public Long getApiControllerId() {
-		return apiControllerId;
+	public String getSource() {
+		return source;
 	}
 
-	public void setApiControllerId(Long apiControllerId) {
-		this.apiControllerId = apiControllerId;
+	public void setSource(final String source) {
+		this.source = source;
 	}
 
 }

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+//TODO brak obsługi bledow z API
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableCaching

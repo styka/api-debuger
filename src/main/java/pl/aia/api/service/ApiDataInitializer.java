@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
-import pl.aia.api.model.ApiController;
 import pl.aia.api.model.ApiRequestGetParameter;
 import pl.aia.api.model.ApiRequestMapping;
 import pl.aia.api.model.ApiRequestPostPutParameter;
@@ -39,9 +38,6 @@ public class ApiDataInitializer {
 	private ApiRequestMappingsService apiRequestMappingsService;
 
 	@Autowired
-	private ApiControllersService apiControllersService;
-
-	@Autowired
 	private ApiRequestGetParametersService apiRequestGetParametersService;
 
 	@Autowired
@@ -55,7 +51,7 @@ public class ApiDataInitializer {
 		for (final String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {
 			final Object bean = applicationContext.getBean(beanDefinitionName);
 			if (isRestController(bean)) {
-				addToApiRegistry(beanDefinitionName, bean);
+				createControllerRequestMappings(bean);
 			}
 		}
 		logApiRegistry();
@@ -63,7 +59,6 @@ public class ApiDataInitializer {
 
 	private void logApiRegistry() {
 		final Gson gson = new Gson();
-		System.out.println(gson.toJson(apiControllersService.getAll()));
 		System.out.println(gson.toJson(apiRequestMappingsService.getAll()));
 		System.out.println(gson.toJson(apiRequestGetParametersService.getAll()));
 		System.out.println(gson.toJson(apiRequestPostPutParametersService.getAll()));
@@ -74,23 +69,11 @@ public class ApiDataInitializer {
 		return bean.getClass().getAnnotation(RestController.class) != null;
 	}
 
-	private void addToApiRegistry(final String controllerName, final Object controller) {
-		final ApiController apiController = createApiController(controllerName);
-		createControllerRequestMappings(controller, apiController.getId());
-	}
-
-	private ApiController createApiController(final String controllerName) {
-		final ApiController apiController = new ApiController();
-		apiController.setName(controllerName);
-		return apiControllersService.create(apiController);
-	}
-
-	private void createControllerRequestMappings(final Object controller, final Long apiControllerId) {
+	private void createControllerRequestMappings(final Object controller) {
 		final String baseRequestMappingValue = getRequestMappingValue(controller);
 		for (final Method method : controller.getClass().getMethods()) {
 			if (hasRequestMappingAnnotation(method)) {
-				final ApiRequestMapping apiRequestMapping = createApiRequestMapping(baseRequestMappingValue, method,
-						apiControllerId);
+				final ApiRequestMapping apiRequestMapping = createApiRequestMapping(baseRequestMappingValue, method);
 				createApiRequestGetParameters(method, apiRequestMapping);
 				createApiRequestPostPutParameters(method, apiRequestMapping);
 				createApiRequestResponseParameters(method, apiRequestMapping);
@@ -153,11 +136,10 @@ public class ApiDataInitializer {
 		return controller.getClass().getAnnotation(RequestMapping.class) != null;
 	}
 
-	private ApiRequestMapping createApiRequestMapping(final String baseRequestMappingValue, final Method method,
-			final Long apiControllerId) {
+	private ApiRequestMapping createApiRequestMapping(final String baseRequestMappingValue, final Method method) {
 		final RequestMapping methodRequestMapping = method.getAnnotation(RequestMapping.class);
 		final ApiRequestMapping apiRequestMapping = new ApiRequestMapping();
-		apiRequestMapping.setApiControllerId(apiControllerId);
+		apiRequestMapping.setSource(method.toString());
 		apiRequestMapping.setMethod(methodRequestMapping.method()[0].toString());
 		apiRequestMapping.setValue(getRequestMappingValue(baseRequestMappingValue, methodRequestMapping));
 		return apiRequestMappingsService.create(apiRequestMapping);
